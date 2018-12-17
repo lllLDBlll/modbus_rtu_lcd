@@ -27,6 +27,7 @@ typedef struct frame{
 	uint8_t reg[2];							//Big Endian
 	uint8_t data[2];						//Big Endian
 	uint8_t crc[2];							//Big Endian
+	char end;	
 };
 
 void modbus_rtu_init(){
@@ -36,13 +37,23 @@ void modbus_rtu_init(){
 	USART_Init(BAUD);
 }
 
-uint16_t modbus_rtu_read(){
+uint16_t *modbus_rtu_read(){
 	//frame_t *f = malloc(sizeof(frame_t));	
 	frame_t f;
-	fprintf(debug,"Modbus:\n\r");
-	uint8_t buff[9];
+	cmd_LCD(0x80,0);
+	fprintf(debug,"\nModbus:\n\r");
 	
-	for(uint8_t i=0; i<8; i++){
+		fprintf(lcd_stream,"M");
+		fprintf(lcd_stream,"O");
+		fprintf(lcd_stream,"D");
+		fprintf(lcd_stream,"B");
+		fprintf(lcd_stream,"U");
+		fprintf(lcd_stream,"S");
+	
+	char buff[9];
+	//uint8_t buff[9];
+	
+	for(uint8_t i=0; i<LEN; i++){
 		buff[i] = USART_rx();		//Receive one byte
 	}
 
@@ -56,6 +67,14 @@ uint16_t modbus_rtu_read(){
 	//f.crc = (buff[6] << 8) | buff[7];
 	f.crc[0] = buff[6];
 	f.crc[1] = buff[7];
+	f.end = '\0';
+	/*
+	for(uint8_t *i=&f; *i; i++){
+		fprintf(lcd_stream,"%c", i);
+		fprintf(debug,"\n%c", 'u');
+	}*/
+	_delay_ms(10);
+	fprintf(debug,"%s\r", &f);
 	
 #if DEBUG
 	fprintf(debug,"Addr: %c\n\r", f.addr);
@@ -67,10 +86,25 @@ uint16_t modbus_rtu_read(){
 	fprintf(debug,"CRC: %c", f.crc[0]);
 	fprintf(debug,"%c\n\r", f.crc[1]);
 	fprintf(debug,"%s\r", &buff);
+	fprintf(debug,"%s\r", &buff);
 	nibble_data(f.data);
 	fprintf(debug,"Data: %c", f.data[0]);
 	fprintf(debug,"%c\n\r", f.data[1]);
 #endif
+	return &f;
+}
+
+void modbus_rtu_write(uint8_t *buf, int len){
+	frame_t *f;
+	uint8_t test[10] = "ZXCVBNMAS";
+	for(uint8_t i=0; i<LEN; i++){
+		//USART_tx(uint8_t buff[i]);
+		//USART_tx(test[i]);
+		USART_tx(buf[i]);
+	}
+	W_CMD
+	ESP_ADDR
+	ADDR_S_0
 }
 
 void nibble_data(uint8_t *data){

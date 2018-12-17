@@ -47,5 +47,4 @@ FILE * get_usart_stream();
 void USART_tx(uint8_t data);
 uint8_t USART_rx();
 
-
 #endif

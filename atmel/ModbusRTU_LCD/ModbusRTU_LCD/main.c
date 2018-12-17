@@ -20,9 +20,8 @@
 int main(void){
 	uint8_t x = 0;
 	
-// 	FILE *lcd_stream = inic_stream();
-// 	inic_LCD_4bits();
-// 		
+	//FILE *lcd_stream = inic_stream();
+ 	//inic_LCD_4bits();// 		
 // 	/* Obtem o stream de depuração */
 // 	FILE *debug = get_usart_stream();
 // 
@@ -34,9 +33,9 @@ int main(void){
 // 	fprintf(debug,"Teste de debug\n\r");
 
 	modbus_rtu_init();
+	frame_t *f;
+	
     while(1){
-        //TODO:: Please write your application code 
-		
 		/* Vai para primeira linha/coluna */
 		cmd_LCD(0x80,0);
 		/* Imprime msg */
@@ -44,7 +43,10 @@ int main(void){
 		
 // 		x = USART_rx();
 // 		fprintf(debug,"%c\n\r", x);
-		modbus_rtu_read();
+		f = modbus_rtu_read();
+		//fprintf(lcd_stream,"%s", "test123");
+		//_delay_ms(1000);
+		modbus_rtu_write(f,0);
 		//_delay_ms(10);
     }
 }

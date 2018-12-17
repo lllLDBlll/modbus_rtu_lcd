@@ -12,6 +12,7 @@
 #define W_CMD		0x01
 #define R_CMD		0x02
 #define BAUD		B9600
+#define LEN			8
 
 //Read-Only Registers
 #define ADDR_A_0	0x01
@@ -28,8 +29,8 @@
 typedef struct frame frame_t;
 
 void modbus_rtu_init();
-uint16_t modbus_rtu_read();
-void modbus_rtu_write(uint16_t );
+uint16_t *modbus_rtu_read();
+void modbus_rtu_write(uint8_t *, int);
 void modbus_rtu_print(uint16_t );
 void nibble_data(uint8_t *);
 uint16_t CRC16_2(uint8_t * , int );
